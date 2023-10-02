@@ -1,5 +1,5 @@
-import { Col, Container, Nav, Navbar, Row } from "react-bootstrap";
-import { sampleProducts } from "./data";
+import { Container, Nav, Navbar } from "react-bootstrap";
+
 import { Outlet } from "react-router-dom";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
 
       <main>
         <Container className="mt-3">
-         <Outlet />
+          <Outlet />
         </Container>
       </main>
       <footer>
