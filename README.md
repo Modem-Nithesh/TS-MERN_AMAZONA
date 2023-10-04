@@ -96,7 +96,6 @@ app.listen(PORT, () => {
 })
 ````
 
-
 Fetch Products
 
 1. install axios
@@ -105,7 +104,7 @@ Fetch Products
 
    ```js
    axios.defaults.baseURL =
-     process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : '/'
+     process.env.NODE_ENV === "development" ? "http://localhost:4000" : "/";
    ```
 
 2. define types in HomePage
@@ -132,24 +131,24 @@ Fetch Products
    const initialState: State = {
      products: [],
      loading: true,
-     error: '',
-   }
+     error: "",
+   };
    const reducer = (state: State, action: Action) => {
      switch (action.type) {
-       case 'FETCH_REQUEST':
-         return { ...state, loading: true }
-       case 'FETCH_SUCCESS':
-         return { ...state, products: action.payload, loading: false }
-       case 'FETCH_FAIL':
-         return { ...state, loading: false, error: action.payload }
+       case "FETCH_REQUEST":
+         return { ...state, loading: true };
+       case "FETCH_SUCCESS":
+         return { ...state, products: action.payload, loading: false };
+       case "FETCH_FAIL":
+         return { ...state, loading: false, error: action.payload };
        default:
-         return state
+         return state;
      }
-   }
+   };
    ```
 
    4. define get error function
-   create types/ApiError.ts
+      create types/ApiError.ts
 
    ```js
     export declare type ApiError = {
@@ -162,15 +161,14 @@ Fetch Products
     }
    ```
 
-
    create utils.ts
 
    ```js
    export const getError = (error: ApiError) => {
      return error.response && error.response.data.message
        ? error.response.data.message
-       : error.message
-   }
+       : error.message;
+   };
    ```
 
    5. fetch products
@@ -196,43 +194,41 @@ Fetch Products
    9. refine return statement
       replace sampleProducts with products
 
-  10. create LoadingBox component
+3. create LoadingBox component
    create /components/LoadingBox.tsx
 
-   ```js
-   export declare type ApiError = {
-    message: string
-    response: {
-    data: {
-    message: string
-    }
-    }
-   }
-   ```
+```js
+export declare type ApiError = {
+ message: string
+ response: {
+ data: {
+ message: string
+ }
+ }
+}
+```
 
-   11. create MessageBox component
-   create /components/MessageBox.tsx
+11. create MessageBox component
+    create /components/MessageBox.tsx
 
-   ```js
-   import Alert from 'react-bootstrap/Alert'
-   import React from 'react'
-   export default function MessageBox({
-   variant = 'info',
-   children,
-   }: {
-    variant?: string
-    children: React.ReactNode
-   }) {
-    return <Alert variant={variant || 'info'}>{children}</Alert>
-   }
-   ```
+```js
+import Alert from 'react-bootstrap/Alert'
+import React from 'react'
+export default function MessageBox({
+variant = 'info',
+children,
+}: {
+ variant?: string
+ children: React.ReactNode
+}) {
+ return <Alert variant={variant || 'info'}>{children}</Alert>
+}
+```
 
+npm i cors
+npm i --save-dev @types/cors
 
-   npm i cors
-   npm i --save-dev @types/cors
-
-
-   # Video-10-Create-Rating-ProductItem-Component
+# Video-10-Create-Rating-ProductItem-Component
 
 1. Rating.js
 
@@ -342,9 +338,9 @@ Fetch Products
            )}
          </Card.Body>
        </Card>
-     )
+     );
    }
-   export default ProductItem
+   export default ProductItem;
    ```
 
 3. HomePage.js
@@ -355,11 +351,10 @@ Fetch Products
    </Col>
    ```
 
-
    # Video-11-Set-Page-Title
 
-1. npm i react-helmet-async
-2. main.tsx
+4. npm i react-helmet-async
+5. main.tsx
 
    ```js
    import { HelmetProvider } from 'react-helmet-async'
@@ -370,7 +365,7 @@ Fetch Products
    </HelmetProvider>
    ```
 
-3. HomePage.tsx
+6. HomePage.tsx
 
    ```js
    import { Helmet } from 'react-helmet-async'
@@ -378,3 +373,77 @@ Fetch Products
    <Helmet>
         <title>Amazona</title>
    </Helmet>
+
+
+   # Video-12-Load-Products-By-React-Query
+
+   ```
+
+7. npm i @tanstack/react-query @tanstack/react-query-devtools
+8. main.tsx
+
+   ```js
+   // remove lines
+   import axios from 'axios'
+   axios.defaults.baseURL =
+     process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : '/'
+
+     ...
+     <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+
+   ```
+
+9. apiClient.ts
+
+   ```js
+   import axios from "axios";
+   const apiClient = axios.create({
+     baseURL:
+       process.env.NODE_ENV === "development" ? "http://localhost:5001" : "/",
+     headers: {
+       "Content-type": "application/json",
+     },
+   });
+
+   export default apiClient;
+   ```
+
+10. hooks/productHook.ts
+
+    ```js
+    export const useGetProductsQuery = () =>
+    useQuery({
+     queryKey: ['products'],
+     queryFn: async () =>
+       (
+         await apiClient.get<Product[]>(`api/products`)
+       ).data,
+    })
+    ```
+
+11. HomePage.tsx
+
+    ```js
+    const { data: products, isLoading, error } = useGetProductsQuery()
+    ...
+     {isLoading ? (
+         <LoadingBox />
+       ) : error ? (
+         <MessageBox variant="danger">{getError(error as ApiError)}</MessageBox>
+       ) : (
+     <Row>
+       <Helmet>
+         <title>TS Amazona</title>
+       </Helmet>
+       {products.map((product) => (
+         <Col key={product.slug} sm={6} md={4} lg={3}>
+           <ProductItem product={product} />
+         </Col>
+       ))}
+     </Row>
+     )}
+
+    ```
