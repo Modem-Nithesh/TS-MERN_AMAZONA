@@ -95,3 +95,286 @@ app.listen(PORT, () => {
   console.log(`server started at http://localhost:${PORT}`)
 })
 ````
+
+
+Fetch Products
+
+1. install axios
+   npm install axios
+   in main.tsx
+
+   ```js
+   axios.defaults.baseURL =
+     process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : '/'
+   ```
+
+2. define types in HomePage
+
+   ```js
+   type State = {
+     products: Product[],
+     loading: boolean
+     error: string
+   }
+   type Action =
+     | { type: 'FETCH_REQUEST' }
+     | {
+         type: 'FETCH_SUCCESS'
+         payload: Product[]
+       }
+     | { type: 'FETCH_FAIL'; payload: string }
+
+   ```
+
+   3. define initial state and reducer in HomePage.tsx
+
+   ```js
+   const initialState: State = {
+     products: [],
+     loading: true,
+     error: '',
+   }
+   const reducer = (state: State, action: Action) => {
+     switch (action.type) {
+       case 'FETCH_REQUEST':
+         return { ...state, loading: true }
+       case 'FETCH_SUCCESS':
+         return { ...state, products: action.payload, loading: false }
+       case 'FETCH_FAIL':
+         return { ...state, loading: false, error: action.payload }
+       default:
+         return state
+     }
+   }
+   ```
+
+   4. define get error function
+   create types/ApiError.ts
+
+   ```js
+    export declare type ApiError = {
+    message: string
+    response: {
+    data: {
+    message: string
+    }
+    }
+    }
+   ```
+
+
+   create utils.ts
+
+   ```js
+   export const getError = (error: ApiError) => {
+     return error.response && error.response.data.message
+       ? error.response.data.message
+       : error.message
+   }
+   ```
+
+   5. fetch products
+
+   ```js
+   const [{ loading, error, products }, dispatch] = useReducer<
+     React.Reducer<State, Action>
+   >(reducer, initialState)
+     useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' })
+      try {
+        const result = await axios.get('/api/products')
+        dispatch({ type: 'FETCH_SUCCESS', payload: result.data })
+      } catch (err) {
+        dispatch({ type: 'FETCH_FAIL', payload: getError(err as ApiError) })
+      }
+    }
+    fetchData()
+   }, [])
+   ```
+
+   9. refine return statement
+      replace sampleProducts with products
+
+  10. create LoadingBox component
+   create /components/LoadingBox.tsx
+
+   ```js
+   export declare type ApiError = {
+    message: string
+    response: {
+    data: {
+    message: string
+    }
+    }
+   }
+   ```
+
+   11. create MessageBox component
+   create /components/MessageBox.tsx
+
+   ```js
+   import Alert from 'react-bootstrap/Alert'
+   import React from 'react'
+   export default function MessageBox({
+   variant = 'info',
+   children,
+   }: {
+    variant?: string
+    children: React.ReactNode
+   }) {
+    return <Alert variant={variant || 'info'}>{children}</Alert>
+   }
+   ```
+
+
+   npm i cors
+   npm i --save-dev @types/cors
+
+
+   # Video-10-Create-Rating-ProductItem-Component
+
+1. Rating.js
+
+   ```js
+      function Rating(props: {
+      rating: number
+      numReviews?: number
+      caption?: string
+    }) {
+      const { rating, numReviews, caption } = props
+      return (
+        <div className="rating">
+          <span>
+            <i
+              className={
+                rating >= 1
+                  ? 'fas fa-star'
+                  : rating >= 0.5
+                  ? 'fas fa-star-half-alt'
+                  : 'far fa-star'
+              }
+            />
+          </span>
+          <span>
+            <i
+              className={
+                rating >= 2
+                  ? 'fas fa-star'
+                  : rating >= 1.5
+                  ? 'fas fa-star-half-alt'
+                  : 'far fa-star'
+              }
+            />
+          </span>
+          <span>
+            <i
+              className={
+                rating >= 3
+                  ? 'fas fa-star'
+                  : rating >= 2.5
+                  ? 'fas fa-star-half-alt'
+                  : 'far fa-star'
+              }
+            />
+          </span>
+          <span>
+            <i
+              className={
+                rating >= 4
+                  ? 'fas fa-star'
+                  : rating >= 3.5
+                  ? 'fas fa-star-half-alt'
+                  : 'far fa-star'
+              }
+            />
+          </span>
+          <span>
+            <i
+              className={
+                rating >= 5
+                  ? 'fas fa-star'
+                  : rating >= 4.5
+                  ? 'fas fa-star-half-alt'
+                  : 'far fa-star'
+              }
+            />
+          </span>
+          {caption ? (
+            <span>{caption}</span>
+          ) : numReviews != 0 ? (
+            <span>{' ' + numReviews + ' reviews'}</span>
+          ) : (
+            ''
+          )}
+        </div>
+      )
+    }
+    export default Rating
+
+   ```
+
+2. ProductItem.js
+
+   ```js
+   function ProductItem({ product }: { product: Product }) {
+     return (
+       <Card>
+         <Link to={`/product/${product.slug}`}>
+           <img
+             src={product.image}
+             className="card-img-top"
+             alt={product.name}
+           />
+         </Link>
+         <Card.Body>
+           <Link to={`/product/${product.slug}`}>
+             <Card.Title>{product.name}</Card.Title>
+           </Link>
+           <Rating rating={product.rating} numReviews={product.numReviews} />
+           <Card.Text>${product.price}</Card.Text>
+           {product.countInStock === 0 ? (
+             <Button variant="light" disabled>
+               Out of stock
+             </Button>
+           ) : (
+             <Button>Add to cart</Button>
+           )}
+         </Card.Body>
+       </Card>
+     )
+   }
+   export default ProductItem
+   ```
+
+3. HomePage.js
+
+   ```js
+   <Col key={product.slug} sm={6} md={4} lg={3} className="mb-3">
+     <ProductItem product={product}></ProductItem>
+   </Col>
+   ```
+
+
+   # Video-11-Set-Page-Title
+
+1. npm i react-helmet-async
+2. main.tsx
+
+   ```js
+   import { HelmetProvider } from 'react-helmet-async'
+
+   ...
+   <HelmetProvider>
+     <RouterProvider router={router} />
+   </HelmetProvider>
+   ```
+
+3. HomePage.tsx
+
+   ```js
+   import { Helmet } from 'react-helmet-async'
+   ...
+   <Helmet>
+        <title>Amazona</title>
+   </Helmet>
