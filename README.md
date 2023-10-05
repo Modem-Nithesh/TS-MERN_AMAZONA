@@ -626,3 +626,96 @@ const switchModeHandler = () => {
              ```
 Use bootstrap 5.3 or above
 ```
+
+create mongodb database
+
+npm install dotenv mongoose @typegoose/typegoose
+
+put mongodb uri in .env
+
+MONGODB_URI=mongodb://localhost/tsmernamazona
+
+index.ts
+
+dotenv.config()
+
+const MONGODB_URI =
+  process.env.MONGODB_URI || 'mongodb://localhost/tsmernamazona'
+mongoose.set('strictQuery', true)
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    console.log('connected to mongodb')
+  })
+  .catch(() => {
+    console.log('error mongodb')
+  })
+models/productModel
+
+import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose'
+
+@modelOptions({})
+
+@modelOptions({ schemaOptions: { timestamps: true } })
+export class Product {
+  public _id!: string
+  @prop({ required: true })
+  public name!: string
+  @prop({ required: true, unique: true })
+  public slug!: string
+  @prop({ required: true })
+  public image!: string
+  @prop()
+  public images!: string[]
+  @prop({ required: true })
+  public brand!: string
+  @prop({ required: true })
+  public category!: string
+  @prop({ required: true })
+  public description!: string
+  @prop({ required: true, default: 0 })
+  public price!: number
+  @prop({ required: true, default: 0 })
+  public countInStock!: number
+  @prop({ required: true, default: 0 })
+  public rating!: number
+  @prop({ required: true, default: 0 })
+  public numReviews!: number
+  @prop({ required: true, default: false })
+  public isFeatured!: boolean
+  @prop()
+  public banner?: string
+}
+
+export const ProductModel = getModelForClass(Product)
+npm i express-async-handler
+
+productRouter.ts
+
+export const productRouter = express.Router()
+
+productRouter.get(
+  '/',
+  asyncHandler(async (req, res) => {
+    const products = await ProductModel.find()
+    res.json(products)
+  })
+)
+index.ts
+
+app.use('/api/products', productRouter)
+run http://localhost:4000/api/products
+
+seedRouter.ts
+
+const seedRouter = express.Router()
+
+seedRouter.get(
+  '/',
+  asyncHandler(async (req: Request, res: Response) => {
+    await ProductModel.deleteMany({})
+    const createdProducts = await ProductModel.insertMany(products)
+    res.send({ createdProducts })
+  })
+)
+export default seedRouter
