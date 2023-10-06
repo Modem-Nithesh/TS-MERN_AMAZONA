@@ -452,7 +452,7 @@ npm i --save-dev @types/cors
 index.ts
 
 app.get('/api/products/:slug', (req: Request, res: Response) => {
-  res.json(sampleProducts.find((x) => x.slug === req.params.slug))
+res.json(sampleProducts.find((x) => x.slug === req.params.slug))
 })
 productHooks.ts
 
@@ -618,6 +618,7 @@ const switchModeHandler = () => {
 }
 ...
 ```
+
 <Button variant={mode} onClick={switchModeHandler}>
                <i
                  className={mode === 'light' ? 'fa fa-sun' : 'fa fa-moon'}
@@ -640,16 +641,16 @@ index.ts
 dotenv.config()
 
 const MONGODB_URI =
-  process.env.MONGODB_URI || 'mongodb://localhost/tsmernamazona'
+process.env.MONGODB_URI || 'mongodb://localhost/tsmernamazona'
 mongoose.set('strictQuery', true)
 mongoose
-  .connect(MONGODB_URI)
-  .then(() => {
-    console.log('connected to mongodb')
-  })
-  .catch(() => {
-    console.log('error mongodb')
-  })
+.connect(MONGODB_URI)
+.then(() => {
+console.log('connected to mongodb')
+})
+.catch(() => {
+console.log('error mongodb')
+})
 models/productModel
 
 import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose'
@@ -658,33 +659,33 @@ import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose'
 
 @modelOptions({ schemaOptions: { timestamps: true } })
 export class Product {
-  public _id!: string
-  @prop({ required: true })
-  public name!: string
-  @prop({ required: true, unique: true })
-  public slug!: string
-  @prop({ required: true })
-  public image!: string
-  @prop()
-  public images!: string[]
-  @prop({ required: true })
-  public brand!: string
-  @prop({ required: true })
-  public category!: string
-  @prop({ required: true })
-  public description!: string
-  @prop({ required: true, default: 0 })
-  public price!: number
-  @prop({ required: true, default: 0 })
-  public countInStock!: number
-  @prop({ required: true, default: 0 })
-  public rating!: number
-  @prop({ required: true, default: 0 })
-  public numReviews!: number
-  @prop({ required: true, default: false })
-  public isFeatured!: boolean
-  @prop()
-  public banner?: string
+public \_id!: string
+@prop({ required: true })
+public name!: string
+@prop({ required: true, unique: true })
+public slug!: string
+@prop({ required: true })
+public image!: string
+@prop()
+public images!: string[]
+@prop({ required: true })
+public brand!: string
+@prop({ required: true })
+public category!: string
+@prop({ required: true })
+public description!: string
+@prop({ required: true, default: 0 })
+public price!: number
+@prop({ required: true, default: 0 })
+public countInStock!: number
+@prop({ required: true, default: 0 })
+public rating!: number
+@prop({ required: true, default: 0 })
+public numReviews!: number
+@prop({ required: true, default: false })
+public isFeatured!: boolean
+@prop()
+public banner?: string
 }
 
 export const ProductModel = getModelForClass(Product)
@@ -695,11 +696,11 @@ productRouter.ts
 export const productRouter = express.Router()
 
 productRouter.get(
-  '/',
-  asyncHandler(async (req, res) => {
-    const products = await ProductModel.find()
-    res.json(products)
-  })
+'/',
+asyncHandler(async (req, res) => {
+const products = await ProductModel.find()
+res.json(products)
+})
 )
 index.ts
 
@@ -711,12 +712,12 @@ seedRouter.ts
 const seedRouter = express.Router()
 
 seedRouter.get(
-  '/',
-  asyncHandler(async (req: Request, res: Response) => {
-    await ProductModel.deleteMany({})
-    const createdProducts = await ProductModel.insertMany(products)
-    res.send({ createdProducts })
-  })
+'/',
+asyncHandler(async (req: Request, res: Response) => {
+await ProductModel.deleteMany({})
+const createdProducts = await ProductModel.insertMany(products)
+res.send({ createdProducts })
+})
 )
 export default seedRouter
 
@@ -832,9 +833,9 @@ export default seedRouter
        price: product.price,
        countInStock: product.countInStock,
        quantity: 1,
-     }
-     return cartItem
-   }
+     };
+     return cartItem;
+   };
    ```
 
 5. ProductItem.ts
@@ -866,30 +867,29 @@ export default seedRouter
              </Button>
    ```
 
+npm i react-toastify
+ProductPage.ts
 
-npm i react-toastify 
-   ProductPage.ts
-
-   const { state, dispatch } = useContext(Store)
-   const { cart } = state
-   const addToCartHandler = async () => {
-     const existItem = cart.cartItems.find((x) => x._id === product!._id)
-     const quantity = existItem ? existItem.quantity + 1 : 1
-     if (product!.countInStock < quantity) {
-       toast.warn('Sorry. Product is out of stock')
-       return
-     }
-     dispatch({
-       type: 'CART_ADD_ITEM',
-       payload: { ...convertProductToCartItem(product!), quantity },
-     })
-     toast.success('Product added to the cart')
-     navigate('/cart')
-   }
-   ...
-   <Button onClick={addToCartHandler} variant="primary">
-                     Add to Cart
-   </Button>
+const { state, dispatch } = useContext(Store)
+const { cart } = state
+const addToCartHandler = async () => {
+const existItem = cart.cartItems.find((x) => x.\_id === product!.\_id)
+const quantity = existItem ? existItem.quantity + 1 : 1
+if (product!.countInStock < quantity) {
+toast.warn('Sorry. Product is out of stock')
+return
+}
+dispatch({
+type: 'CART_ADD_ITEM',
+payload: { ...convertProductToCartItem(product!), quantity },
+})
+toast.success('Product added to the cart')
+navigate('/cart')
+}
+...
+<Button onClick={addToCartHandler} variant="primary">
+Add to Cart
+</Button>
 npm i react-router-bootstrap
 npm i --save-dev @types/react-router-bootstrap
 
@@ -900,122 +900,144 @@ App.tsx
 </LinkContainer>
 ```
 
-
 CartPage.ts
 
 export default function CartPage() {
-  const navigate = useNavigate()
-  const {
-    state: {
-      cart: { cartItems },
-    },
-    dispatch,
-  } = useContext(Store)
+const navigate = useNavigate()
+const {
+state: {
+cart: { cartItems },
+},
+dispatch,
+} = useContext(Store)
 
-  const updateCartHandler = async (item: CartItem, quantity: number) => {
-    if (item.countInStock < quantity) {
-      toast.warn('Sorry. Product is out of stock')
-      return
-    }
-    dispatch({
-      type: 'CART_ADD_ITEM',
-      payload: { ...item, quantity },
-    })
-  }
+const updateCartHandler = async (item: CartItem, quantity: number) => {
+if (item.countInStock < quantity) {
+toast.warn('Sorry. Product is out of stock')
+return
+}
+dispatch({
+type: 'CART_ADD_ITEM',
+payload: { ...item, quantity },
+})
+}
 
-  return (
-    <div>
-      <Helmet>
-        <title>Shopping Cart</title>
-      </Helmet>
-      <h1>Shopping Cart</h1>
-      <Row>
-        <Col md={8}>
-          {cartItems.length === 0 ? (
-            <MessageBox>
-              Cart is empty. <Link to="/">Go Shopping</Link>
-            </MessageBox>
-          ) : (
-            <ListGroup>
-              {cartItems.map((item: CartItem) => (
-                <ListGroup.Item key={item._id}>
-                  <Row className="align-items-center">
-                    <Col md={4}>
-                      <img
+return (
+<div>
+<Helmet>
+<title>Shopping Cart</title>
+</Helmet>
+<h1>Shopping Cart</h1>
+<Row>
+<Col md={8}>
+{cartItems.length === 0 ? (
+<MessageBox>
+Cart is empty. <Link to="/">Go Shopping</Link>
+</MessageBox>
+) : (
+<ListGroup>
+{cartItems.map((item: CartItem) => (
+<ListGroup.Item key={item.\_id}>
+<Row className="align-items-center">
+<Col md={4}>
+<img
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img> <Link to={`/product/${item.slug}`}>{item.name}</Link>
-                    </Col>
-                    <Col md={3}>
-                      <Button
-                        onClick={() =>
-                          updateCartHandler(item, item.quantity - 1)
-                        }
-                        variant="light"
-                        disabled={item.quantity === 1}
-                      >
-                        <i className="fas fa-minus-circle"></i>
-                      </Button>{' '}
-                      <span>{item.quantity}</span>{' '}
-                      <Button
-                        variant="light"
-                        onClick={() =>
-                          updateCartHandler(item, item.quantity + 1)
-                        }
-                        disabled={item.quantity === item.countInStock}
-                      >
-                        <i className="fas fa-plus-circle"></i>
-                      </Button>
-                    </Col>
-                    <Col md={3}>${item.price}</Col>
-                    <Col md={2}>
-                      <Button
-                        onClick={() => removeItemHandler(item)}
-                        variant="light"
-                      >
-                        <i className="fas fa-trash"></i>
-                      </Button>
-                    </Col>
-                  </Row>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          )}
-        </Col>
-        <Col md={4}>
-          <Card>
-            <Card.Body>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <h3>
-                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
-                    items) : $
-                    {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
-                  </h3>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <div className="d-grid">
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={checkoutHandler}
-                      disabled={cartItems.length === 0}
-                    >
-                      Proceed to Checkout
-                    </Button>
-                  </div>
-                </ListGroup.Item>
-              </ListGroup>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </div>
-  )
+</Col>
+<Col md={3}>
+<Button
+onClick={() =>
+updateCartHandler(item, item.quantity - 1)
+}
+variant="light"
+disabled={item.quantity === 1} >
+<i className="fas fa-minus-circle"></i>
+</Button>{' '}
+<span>{item.quantity}</span>{' '}
+<Button
+variant="light"
+onClick={() =>
+updateCartHandler(item, item.quantity + 1)
+}
+disabled={item.quantity === item.countInStock} >
+<i className="fas fa-plus-circle"></i>
+</Button>
+</Col>
+<Col md={3}>${item.price}</Col>
+<Col md={2}>
+<Button
+onClick={() => removeItemHandler(item)}
+variant="light" >
+<i className="fas fa-trash"></i>
+</Button>
+</Col>
+</Row>
+</ListGroup.Item>
+))}
+</ListGroup>
+)}
+</Col>
+<Col md={4}>
+<Card>
+<Card.Body>
+<ListGroup variant="flush">
+<ListGroup.Item>
+<h3>
+Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+items) : $
+{cartItems.reduce((a, c) => a + c.price \* c.quantity, 0)}
+</h3>
+</ListGroup.Item>
+<ListGroup.Item>
+<div className="d-grid">
+<Button
+type="button"
+variant="primary"
+onClick={checkoutHandler}
+disabled={cartItems.length === 0} >
+Proceed to Checkout
+</Button>
+</div>
+</ListGroup.Item>
+</ListGroup>
+</Card.Body>
+</Card>
+</Col>
+</Row>
+</div>
+)
 }
 main.ts
 
 <Route path="/cart" element={<CartPage />} />
 
+# Video-19-Implement-Remove-From-Cart
 
+1. CartPage.ts
+
+   ```js
+   const removeItemHandler = (item: CartItem) => {
+     dispatch({ type: 'CART_REMOVE_ITEM', payload: item })
+   }
+   ...
+    <Button
+       onClick={() => removeItemHandler(item)}
+           variant="light"
+            >
+        <i className="fas fa-trash"></i>
+      </Button>
+   ```
+
+2. Store.tsx
+
+   ```js
+       case 'CART_REMOVE_ITEM': {
+      const cartItems = state.cart.cartItems.filter(
+        (item: CartItem) => item._id !== action.payload._id
+      )
+      localStorage.setItem('cartItems', JSON.stringify(cartItems))
+      return { ...state, cart: { ...state.cart, cartItems } }
+    }
+   ``` 
