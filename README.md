@@ -865,3 +865,38 @@ export default seedRouter
                Add to cart
              </Button>
    ```
+
+
+npm i react-toastify 
+   ProductPage.ts
+
+   const { state, dispatch } = useContext(Store)
+   const { cart } = state
+   const addToCartHandler = async () => {
+     const existItem = cart.cartItems.find((x) => x._id === product!._id)
+     const quantity = existItem ? existItem.quantity + 1 : 1
+     if (product!.countInStock < quantity) {
+       toast.warn('Sorry. Product is out of stock')
+       return
+     }
+     dispatch({
+       type: 'CART_ADD_ITEM',
+       payload: { ...convertProductToCartItem(product!), quantity },
+     })
+     toast.success('Product added to the cart')
+     navigate('/cart')
+   }
+   ...
+   <Button onClick={addToCartHandler} variant="primary">
+                     Add to Cart
+   </Button>
+npm i react-router-bootstrap
+
+App.tsx
+
+<LinkContainer to="/">
+  <Navbar.Brand>amazona</Navbar.Brand>
+</LinkContainer>
+```
+
+
